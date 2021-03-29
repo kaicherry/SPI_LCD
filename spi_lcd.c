@@ -22,10 +22,10 @@
 // control lines. 
 
 // Use one of the following 4 methods for talking to the SPI/GPIO
-#define USE_PIGPIO
+//#define USE_PIGPIO
 //#define USE_BCM2835
 //#define USE_WIRINGPI
-//#define USE_GENERIC
+#define USE_GENERIC
 
 // For generic SPI access (kernel drivers), select the board pinout (only one)
 //#define USE_NANOPI2
@@ -35,6 +35,7 @@
 //define USE_NANOPIM1
 //#define USE_RPI
 //#define USE_ORANGEPIZERO
+#define USE_ORANGEPIZERO2
 //#define USE_ORANGEPIONE
 //#define USE_BANANAPIM2ZERO
 //#define USE_BANANAPIM2MAGIC
@@ -134,6 +135,14 @@ static int iGenericPins[] = {-1,-1,-1,12,-1,11,-1,6,13,-1,14,1,110,0,-1,3,68,-1,
 static int iGenericPins[] = {-1,-1,-1,12,-1,11,-1,6,198,-1,199,1,7,0,-1,3,19,-1,18,15,-1,16,2,14,13,-1,10,-1,5,4,-1,
 -1,-1,-1,-1,-1,-1,-1,-1};
 #endif // ORANGEPIZERO
+
+// Orange Pi Zero 2
+#ifdef USE_ORANGEPIZERO2
+static int iGenericPins[] = {-1,-1,-1,229,-1,228,-1,73,
+                           226,-1,227,70,75,69,-1,72,79,
+                           -1,78,231,-1,232,71,230,233,
+                           -1,74,65,-1,272,-1,262,-1,234,-1};
+#endif // ORANGEPIZERO2
 
 #ifdef USE_NANOPIDUO
 static int iGenericPins[] = {-1,5,-1,4,-1,-1,-1,11,
@@ -661,7 +670,11 @@ int i, iCount;
 	char szName[32];
 	int rc, iSPIMode = SPI_MODE_0; // | SPI_NO_CS;
 	int i = iSPIFreq;
+	#ifdef USE_ORANGEPIZERO2
+	sprintf(szName,"/dev/spidev%d.1", iChannel);
+	#else	
 	sprintf(szName,"/dev/spidev%d.0", iChannel);
+	#endif
 	file_spi = open(szName, O_RDWR);
 	rc = ioctl(file_spi, SPI_IOC_WR_MODE, &iSPIMode);
 	if (rc < 0) printf("Error setting SPI mode\n");
